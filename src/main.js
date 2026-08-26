@@ -760,8 +760,18 @@ function wireSystemTheme() {
   const handler = () => { if (state.theme === 'auto') applyTheme(); };
   if (mq.addEventListener) mq.addEventListener('change', handler);
   else if (mq.addListener) mq.addListener(handler);
-  // Periodic re-check for KDE/GNOME (matchMedia doesn't always pick up toolkit changes)
-  setInterval(() => { if (state.theme === 'auto') applyTheme(); }, 5000);
+  // Antes había aquí un setInterval de 5s. Cada vuelta llamaba a
+  // detect_system_theme, que lanza hasta 3 procesos (kreadconfig6, kreadconfig5,
+  // gsettings), y corría siempre: con la app minimizada, con la pantalla
+  // bloqueada, toda la sesión. Unas 17.000 comprobaciones al día por app.
+  //
+  // matchMedia cubre el caso normal. Para los cambios de tema del escritorio que
+  // matchMedia no ve, basta con volver a mirar cuando la ventana recupera el
+  // foco o la visibilidad: es justo el momento en que el usuario vuelve de
+  // Ajustes y podría notar el desajuste.
+  const recheck = () => { if (state.theme === 'auto' && !document.hidden) applyTheme(); };
+  document.addEventListener('visibilitychange', recheck);
+  window.addEventListener('focus', recheck);
 }
 
 // ───────── SCIENTIFIC ─────────

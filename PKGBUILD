@@ -1,5 +1,5 @@
 pkgname=bookos-calc
-pkgver=0.1.0
+pkgver=0.6.1
 pkgrel=1
 pkgdesc="Calculadora científica para BookOS"
 arch=('x86_64')
