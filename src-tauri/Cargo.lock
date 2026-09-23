@@ -144,9 +144,10 @@ dependencies = [
 
 [[package]]
 name = "bookos-calc"
-version = "0.6.1"
+version = "0.6.2"
 dependencies = [
  "dirs 5.0.1",
+ "gtk",
  "serde",
  "serde_json",
  "tauri",

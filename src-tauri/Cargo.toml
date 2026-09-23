@@ -1,6 +1,6 @@
 [package]
 name = "bookos-calc"
-version = "0.6.1"
+version = "0.6.2"
 description = "BookOS Calc"
 authors = ["BookOS"]
 edition = "2021"
@@ -13,6 +13,11 @@ tauri = { version = "2", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 dirs = "5"
+
+# Para apagar el zoom por pellizco de WebKitGTK (ver main.rs). Es la misma
+# versión que ya arrastra tauri: no añade nada al árbol, solo la hace visible.
+[target.'cfg(target_os = "linux")'.dependencies]
+gtk = "0.18"
 
 [features]
 default = ["custom-protocol"]
