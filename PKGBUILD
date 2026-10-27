@@ -3,8 +3,8 @@ pkgver=0.6.1
 pkgrel=1
 pkgdesc="Calculadora científica para BookOS"
 arch=('x86_64')
-url="https://github.com/Evelynx08/bookos-calc"
-license=('MIT')
+url="https://github.com/bookos-os/bookos-calc"
+license=('LicenseRef-BookOS')
 depends=('webkit2gtk-4.1' 'gtk3' 'libayatana-appindicator' 'librsvg' 'libsoup3')
 makedepends=('rust' 'cargo' 'pkgconf' 'base-devel')
 source=()
@@ -21,7 +21,8 @@ package() {
 
   install -Dm644 /dev/stdin "$pkgdir/usr/share/applications/bookos-calc.desktop" <<EOF
 [Desktop Entry]
-Name=Bookos Calc
+Name=Calculator
+Name[es]=Calculadora
 Comment=Calculadora cientifica BookOS
 Exec=bookos-calc
 Icon=bookos-calc

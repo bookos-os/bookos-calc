@@ -122,13 +122,51 @@ fn desactivar_zoom_por_pellizco<R: tauri::Runtime>(
     });
 }
 
+#[tauri::command]
+fn bookos_language() -> String {
+    let locale = std::env::var("LANG").unwrap_or_else(|_| "en".into());
+    let Some(home) = std::env::var_os("HOME") else {
+        return if locale.to_lowercase().starts_with("es") { "es" } else { "en" }.into();
+    };
+    let path = std::path::PathBuf::from(home).join(".config/bookos/settings.json");
+    let language = std::fs::read_to_string(path)
+        .ok()
+        .and_then(|json| serde_json::from_str::<serde_json::Value>(&json).ok())
+        .and_then(|settings| settings.get("AppLanguage").and_then(|value| value.as_str()).map(str::to_owned));
+    match language.as_deref() {
+        Some("es") => "es".into(),
+        Some("en") => "en".into(),
+        _ if locale.to_lowercase().starts_with("es") => "es".into(),
+        _ => "en".into(),
+    }
+}
+
+/// Ajustes de WebKitGTK que recortan memoria. Van por entorno porque los leen
+/// los procesos hijos (web y red) al arrancar y wry no deja tocar la vista
+/// antes de crearla. Medido en PSS del árbol entero, mediana de 5 arranques
+/// (WebKitGTK 2.54.1, Wayland, Intel LNL): 109,6 MB sin nada, 109,6 → 92,3 con
+/// `JSC_useJIT=0`: el intérprete sobra para una calculadora y el JIT reserva
+/// memoria ejecutable que crece con el uso.
+///
+/// `WEBKIT_DISABLE_DMABUF_RENDERER=1` bajaba a 95,6 MB pero con él la ventana
+/// salió negra y sin repintar (se veía el texto de la terminal de detrás);
+/// no se activa mientras no se demuestre que es inocente. `MALLOC_ARENA_MAX=1` y `WEBKIT_DISABLE_COMPOSITING_MODE` no
+/// se notan. Lo que ya venga definido se respeta.
+fn ajustar_webkit() {
+    if std::env::var_os("JSC_useJIT").is_none() {
+        std::env::set_var("JSC_useJIT", "0");
+    }
+}
+
 fn main() {
+    ajustar_webkit();
     tauri::Builder::default()
         .on_page_load(desactivar_zoom_por_pellizco)
         .invoke_handler(tauri::generate_handler![
             bookos_palette_css,
             load_state,
             save_state,
+            bookos_language,
             detect_system_theme
         ])
         .setup(|app| {

@@ -17,27 +17,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Roboto,
 .main-container.fullscreen-calc{border-radius:0;border:0}
 
 /* Titlebar — same shape as clock */
-.titlebar{height:42px;display:flex;justify-content:space-between;align-items:center;padding:0 8px 0 12px;flex-shrink:0;gap:6px}
+.titlebar{height:42px;display:flex;justify-content:space-between;align-items:center;padding:0 6px 0 12px;flex-shrink:0;gap:6px}
 .tb-left{display:flex;align-items:center;gap:6px;flex:1;min-width:0;height:100%;overflow:hidden}
 .tb-title{font-size:12.5px;font-weight:600;color:var(--tx2);letter-spacing:.1px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tb-right{display:flex;align-items:center;gap:1px;flex-shrink:0}
 .tb-icon-btn{background:0;border:0;color:var(--tx);cursor:pointer;opacity:.55;width:28px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;transition:.12s;-webkit-app-region:no-drag;flex-shrink:0}
 .tb-icon-btn:hover{opacity:1;background:var(--hov)}
 .tb-icon-btn.active{opacity:1;background:var(--hov);color:var(--blue)}
-.controls{display:flex;gap:1px;margin-left:4px;flex-shrink:0}
-.controls button{background:0;border:0;color:var(--tx);font-size:13px;cursor:pointer;opacity:.6;width:28px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;transition:.12s;flex-shrink:0;-webkit-app-region:no-drag}
-.controls button:hover{opacity:1;background:var(--hov)}
-#close:hover{background:var(--red);color:#fff;opacity:1}
+.controls{display:flex;gap:4px;margin-left:4px;flex-shrink:0}
+/* Botones de ventana: los del escritorio, medida por medida (AI-DESIGN-SYSTEM §11.2).
+   Tinta del texto al 55 %, placa solo al señalar y rojo solo en cerrar. */
+.controls button{background:0;border:0;color:color-mix(in srgb, var(--tx) 55%, transparent);cursor:pointer;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:background .12s,color .12s;flex-shrink:0;-webkit-app-region:no-drag}
+.controls button:hover{color:var(--tx);background:color-mix(in srgb, var(--tx) 14%, transparent)}
+.dark-mode .controls button:hover{background:color-mix(in srgb, var(--tx) 17%, transparent)}
+#close:hover{background:var(--red);color:#fff}
 
 /* Page area */
 .page-wrap{flex:1;min-height:0;overflow:hidden;position:relative}
 .page{position:absolute;inset:0;display:flex;flex-direction:column;padding:8px 20px 22px;overflow:hidden}
 .page.hidden{display:none}
 
-/* Calc frame: app-like fixed block, centered both axes */
-.calc-frame{width:100%;max-width:440px;margin:auto;display:flex;flex-direction:column;flex:0 1 auto;min-height:0;height:100%;max-height:720px}
-.calc-frame-wide{max-width:680px;max-height:780px}
-.page-calc,.page-scientific{justify-content:center;align-items:center}
+/* El lado de la tecla (--k) sale del hueco que hay, en ancho Y en alto. Antes
+   solo miraba el ancho: a 380×620 el teclado más la pantalla pedían 565px en un
+   hueco de 546 y la última fila salía cortada. En alto caben 5 teclas, 4
+   separaciones y la pantalla, que crece con la tecla (su cifra mide .72k):
+   114px fijos + 5,756k, de ahí el divisor. */
+.page-calc,.page-scientific{justify-content:center;align-items:center;container-type:size}
+.calc-frame{--g:10px;--k:min(84px,(100cqw - 3*var(--g))/4,(100cqh - 114px)/5.76);width:calc(4*var(--k) + 3*var(--g));margin:auto;display:flex;flex-direction:column;flex:0 1 auto;min-height:0;height:100%;max-height:720px}
+/* Científica: siete filas que encogen (--h) antes de cortarse; la pantalla
+   se queda con la cifra de una tecla de 80px. 143px de pantalla + 6 huecos de 7. */
+.calc-frame-wide{--k:80px;--h:min(48px,(100cqh - 189px)/7);width:100%;max-width:680px;max-height:780px}
 
 .settings-frame{width:100%;max-width:640px;margin:0 auto;flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding-top:4px}
 .settings-frame::-webkit-scrollbar{display:none}
@@ -49,12 +58,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Roboto,
 @media(max-width:420px){.tb-title{display:none}}
 .mode-chip:hover{opacity:1;background:color-mix(in srgb, var(--sbg) 70%, var(--blue) 18%);color:var(--blue)}
 .mode-chip svg{opacity:.6}
-.mode-menu{position:absolute;top:42px;left:14px;background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:5px;z-index:30;box-shadow:0 8px 32px rgba(0,0,0,.16);display:flex;flex-direction:column;min-width:160px}
+.mode-menu{position:absolute;top:42px;left:14px;background:var(--card);border:1px solid var(--brd);border-radius:18px;padding:5px;z-index:30;box-shadow:0 6px 22px rgba(0,0,0,.18);display:flex;flex-direction:column;min-width:160px}
 .mode-menu.hidden{display:none}
-.mode-menu button{background:0;border:0;color:var(--tx);font-family:inherit;font-size:13px;font-weight:500;text-align:left;padding:9px 14px;border-radius:9px;cursor:pointer;transition:.12s}
+.mode-menu button{background:0;border:0;color:var(--tx);font-family:inherit;font-size:13px;font-weight:500;text-align:left;padding:9px 14px;border-radius:13px;cursor:pointer;transition:.12s;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .mode-menu button:hover{background:var(--hov)}
 .mode-menu button.on{color:var(--blue)}
-.mode-menu button.on::after{content:"✓";float:right;font-weight:600}
+.mode-menu button.on::after{content:"";width:16px;height:16px;flex-shrink:0;background:currentColor;-webkit-mask:var(--check) center/contain no-repeat;mask:var(--check) center/contain no-repeat;--check:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4.5 12.75 6 6 9-13.5'/%3E%3C/svg%3E")}
 
 @keyframes pageInR{from{opacity:0;transform:translate3d(36px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
 @keyframes pageInL{from{opacity:0;transform:translate3d(-36px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
@@ -62,21 +71,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Roboto,
 .page.slide-in-l{animation:pageInL .26s cubic-bezier(.22,.9,.3,1)}
 
 /* Display card — same shape as settings .detail-card */
-.display-card{background:var(--card);border-radius:22px;display:flex;flex-direction:column;overflow:hidden;flex:1 1 auto;min-height:120px;margin-bottom:14px}
-.display-wrap{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;padding:18px 22px 20px;text-align:right;overflow:hidden}
+.display-card{background:var(--card);border-radius:22px;display:flex;flex-direction:column;overflow:hidden;flex:1 1 auto;min-height:0;margin-bottom:14px}
+.display-wrap{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;padding:12px 20px 14px;text-align:right;overflow:hidden}
 .display-expr{font-size:18px;color:var(--tx2);font-weight:500;min-height:24px;letter-spacing:-.2px;font-variant-numeric:tabular-nums;overflow-x:auto;overflow-y:hidden;white-space:nowrap;opacity:.85;scrollbar-width:none;direction:rtl}
 .display-expr::-webkit-scrollbar{display:none}
-.display-result{font-size:58px;font-weight:300;letter-spacing:-2px;line-height:1.05;color:var(--tx);font-variant-numeric:tabular-nums;overflow-x:auto;overflow-y:hidden;white-space:nowrap;margin-top:6px;transition:font-size .15s,color .15s;cursor:pointer;scrollbar-width:none;direction:rtl;-webkit-user-select:text;user-select:text}
+.display-result{font-size:calc(var(--k)*.72);font-weight:300;letter-spacing:-2px;line-height:1.05;color:var(--tx);font-variant-numeric:tabular-nums;overflow-x:auto;overflow-y:hidden;white-space:nowrap;margin-top:6px;transition:color .15s;cursor:pointer;scrollbar-width:none;direction:rtl;-webkit-user-select:text;user-select:text}
 .display-result::-webkit-scrollbar{display:none}
-.display-result.shrink{font-size:44px;letter-spacing:-1.5px}
-.display-result.shrink-2{font-size:34px;letter-spacing:-1px}
+/* `direction:rtl` está para que, si la cifra no cabe, se vea el final. Pero
+   reordena lo que no tiene letras: «-5» salía «5-» y «12 × 34 =», «= 34 × 12».
+   Una marca izquierda-a-derecha a cada lado fija el orden sin entrar en lo que
+   se copia. */
+.display-expr::before,.display-expr::after,.display-result::before,.display-result::after{content:"\200e"}
+.display-result.shrink{font-size:calc(var(--k)*.55);letter-spacing:-1.5px}
+.display-result.shrink-2{font-size:calc(var(--k)*.42);letter-spacing:-1px}
 .display-result.flash{animation:resFlash .25s ease}
 .display-result.error{color:var(--red)}
 @keyframes resFlash{0%{transform:scale(1)}40%{transform:scale(1.04)}100%{transform:scale(1)}}
 
 /* Keypad — circular tiles, same palette as bookos-settings */
-.keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:4px 0 0;flex-shrink:0;width:100%}
-.key{width:100%;aspect-ratio:1;max-width:84px;max-height:84px;justify-self:center;border:0;border-radius:50%;background:var(--card);color:var(--tx);font-size:22px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;letter-spacing:-.3px;transition:background .14s,transform .08s,outline-color .15s;position:relative;outline:2px solid transparent;outline-offset:-2px}
+.keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--g);padding:4px 0 0;flex-shrink:0;width:100%}
+.key{width:var(--k);height:var(--k);justify-self:center;border:0;border-radius:50%;background:var(--card);color:var(--tx);font-size:calc(var(--k)*.29);font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;letter-spacing:-.3px;transition:background .14s,transform .08s,outline-color .15s;position:relative;outline:2px solid transparent;outline-offset:-2px}
 .key:hover{background:color-mix(in srgb, var(--card) 92%, var(--tx) 8%)}
 .key:active,.key.pressed{transform:scale(.92);background:color-mix(in srgb, var(--card) 78%, var(--tx) 14%)}
 .key:focus-visible{outline-color:var(--blue)}
@@ -84,17 +98,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Roboto,
 .key-fn{color:var(--blue);font-weight:500}
 .key-back{color:var(--red)}
 
-.key-op{color:var(--blue);font-size:24px;font-weight:600}
+.key-op{color:var(--blue);font-size:calc(var(--k)*.32);font-weight:600}
 .key-op.locked{background:var(--blue);color:#fff}
 .key-op.locked:hover{background:color-mix(in srgb, var(--blue) 90%, #fff 10%)}
 
-.key-eq{background:var(--blue);color:#fff;font-size:26px;font-weight:600}
+.key-eq{background:var(--blue);color:#fff;font-size:calc(var(--k)*.34);font-weight:600}
 .key-eq:hover{background:color-mix(in srgb, var(--blue) 90%, #fff 10%)}
 .key-eq:active,.key-eq.pressed{background:color-mix(in srgb, var(--blue) 82%, #000 12%);transform:scale(.92)}
 
 /* Scientific keypad — 6 cols, smaller keys */
 .keypad-sci{grid-template-columns:repeat(6,1fr);gap:7px;max-width:680px}
-.keypad-sci .key{width:auto;height:48px;font-size:16px;aspect-ratio:auto;min-width:0;padding:0 4px}
+.keypad-sci .key{width:auto;height:var(--h);font-size:16px;min-width:0;padding:0 4px;justify-self:stretch}
 .keypad-sci .key.small{font-size:13px;font-weight:500}
 .keypad-sci .key-fn.small{color:var(--blue)}
 .keypad-sci .key-op.small{font-size:18px}
@@ -188,20 +202,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Roboto,
 
 /* ===== Responsive overrides (must come AFTER all base rules) ===== */
 @media(min-width:700px) and (min-height:680px){
-  .calc-frame{max-width:none;max-height:none;height:100%}
+  .calc-frame{width:100%;max-height:none;height:100%}
   .calc-frame-wide{max-width:none;max-height:none}
   .page{padding:14px 28px 24px}
   /* Display takes a big share of vertical space */
   .display-card{flex:1 1 auto;min-height:200px;max-height:none;margin-bottom:16px}
+  .display-wrap{padding:18px 22px 20px}
   .display-result{font-size:min(120px,16vh)}
   .display-result.shrink{font-size:min(92px,12vh)}
   .display-result.shrink-2{font-size:min(70px,9vh)}
   .display-expr{font-size:min(26px,3vh)}
   /* Keypad: compact rows, capped key height */
-  .keypad{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(48px,68px);
+  .keypad{flex:0 0 auto;grid-auto-rows:minmax(48px,68px);
           gap:10px;max-width:none;margin:0;width:100%;min-height:0}
-  .keypad .key{width:100%;height:100%;max-width:none;max-height:none;aspect-ratio:auto;
-       border-radius:18px;font-size:20px}
+  .keypad .key{width:100%;height:100%;border-radius:18px;font-size:20px}
   .keypad .key-op{font-size:22px}
   .keypad .key-eq{font-size:24px;border-radius:18px}
 }
@@ -218,6 +232,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Roboto,
   .keypad .key{border-radius:22px;font-size:24px}
   .keypad .key-op{font-size:26px}
   .keypad .key-eq{font-size:28px;border-radius:22px}
+}
+
+/* Científica en ventana grande: siete filas con la altura de fila de la
+   estándar no caben (a 900×720 el teclado acababa en 813px de 719). Reparte lo
+   que queda bajo la pantalla de 200px; 304 = pantalla + márgenes + 6 huecos de 14. */
+@media(min-width:700px) and (min-height:680px){
+  .keypad.keypad-sci{grid-auto-rows:min(84px,(100cqh - 304px)/7)}
 }
 
 /* mini-select for settings dropdowns */

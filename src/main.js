@@ -1,4 +1,17 @@
 // BookOS Calc — frontend
+
+// El idioma y el tema se eligen en Ajustes de BookOS, no por ventana.
+for (const id of ["theme-btn", "lang-btn"]) {
+  const control = document.getElementById(id);
+  if (control) control.hidden = true;
+}
+for (const id of ["ui-lang", "seg-theme"]) {
+  const control = document.getElementById(id);
+  control?.closest(".detail-item")?.remove();
+}
+const selectorTema = document.getElementById("themePicker")?.closest(".settings-row");
+if (selectorTema) selectorTema.hidden = true;
+
 const invoke = (cmd, args) => window.__TAURI__.core.invoke(cmd, args);
 const tauriWin = () => window.__TAURI__.window.getCurrentWindow();
 const $ = (s, r=document) => r.querySelector(s);
@@ -66,12 +79,13 @@ async function loadState() {
   try { state = await invoke('load_state'); }
   catch { state = { history: [], theme: 'auto' }; }
   if (!Array.isArray(state.history)) state.history = [];
-  if (!state.theme) state.theme = 'auto';
+  state.theme = 'auto';
   state.settings = { ...DEFAULT_SETTINGS, ...(state.settings || {}) };
   if (!state.settings.rates || typeof state.settings.rates !== 'object') {
     state.settings.rates = JSON.parse(JSON.stringify(DEFAULT_RATES));
   }
-  if (window.BookosI18n) BookosI18n.setLang(state.settings.uiLang || 'auto');
+  state.settings.uiLang = await invoke('bookos_language').catch(() => 'es');
+  if (window.BookosI18n) BookosI18n.setLang(state.settings.uiLang);
 }
 async function saveState() { try { await invoke('save_state', { state }); } catch(e){console.error(e);} }
 
